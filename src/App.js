@@ -5,6 +5,7 @@ import Signup from "./pages/Signup";
 import ManageSchedule from "./pages/ManageSchedule";
 import ViewSchedule from "./pages/ViewSchedule";
 import Feedback from "./pages/Feedback";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/manage-schedule" element={<ManageSchedule />} />
         <Route path="/view-schedule" element={<ViewSchedule />} />
         <Route path="/feedback" element={<Feedback />} />
+        <Route path="/Dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );
