@@ -30,7 +30,7 @@
     "recharts": "^2.15.1",
     "web-vitals": "^2.1.4"
   },
-  "homepage": "https://sak2n21.github.io/Shedify",
+  "homepage": "https://sak2n21.github.io/Schedify",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
