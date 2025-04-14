@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/diabetic-retinopathy-app/static/css/main.e6c13ad2.css",
-    "main.js": "/diabetic-retinopathy-app/static/js/main.bc89af78.js",
-    "static/js/453.2838e13c.chunk.js": "/diabetic-retinopathy-app/static/js/453.2838e13c.chunk.js",
-    "index.html": "/diabetic-retinopathy-app/index.html",
-    "main.e6c13ad2.css.map": "/diabetic-retinopathy-app/static/css/main.e6c13ad2.css.map",
-    "main.bc89af78.js.map": "/diabetic-retinopathy-app/static/js/main.bc89af78.js.map",
-    "453.2838e13c.chunk.js.map": "/diabetic-retinopathy-app/static/js/453.2838e13c.chunk.js.map"
+    "main.css": "/Schedify/static/css/main.e6c13ad2.css",
+    "main.js": "/Schedify/static/js/main.6f8d08ac.js",
+    "static/js/453.2838e13c.chunk.js": "/Schedify/static/js/453.2838e13c.chunk.js",
+    "index.html": "/Schedify/index.html",
+    "main.e6c13ad2.css.map": "/Schedify/static/css/main.e6c13ad2.css.map",
+    "main.6f8d08ac.js.map": "/Schedify/static/js/main.6f8d08ac.js.map",
+    "453.2838e13c.chunk.js.map": "/Schedify/static/js/453.2838e13c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.bc89af78.js"
+    "static/js/main.6f8d08ac.js"
   ]
 }
