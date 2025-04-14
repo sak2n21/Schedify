@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { db, auth } from "../firebase";
-import { collection, addDoc, getDocs, query, orderBy, limit } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+} from "firebase/firestore";
 import Sidebar from "../components/Sidebar";
 import { useMediaQuery } from "react-responsive";
+import { onAuthStateChanged } from "firebase/auth";
+import {  where } from "firebase/firestore";
 
 const Feedback = () => {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -10,38 +19,42 @@ const Feedback = () => {
   const [message, setMessage] = useState("");
   const [category, setCategory] = useState("Suggestion");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [notification, setNotification] = useState({ show: false, message: "", type: "" });
+  const [notification, setNotification] = useState({
+    show: false,
+    message: "",
+    type: "",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [viewMode, setViewMode] = useState("form"); // "form" or "history"
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   useEffect(() => {
-    // Close sidebar automatically on mobile
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    }
-    
-    // Fetch logged-in user details
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      setUserName(currentUser.displayName || currentUser.email);
-    }
+    if (isMobile) setIsSidebarOpen(false);
 
-    fetchFeedbacks();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserName(user.displayName || user.email);
+        fetchFeedbacks(user.uid); // pass UID directly
+      }
+    });
+
+    return () => unsubscribe(); // cleanup on unmount
   }, [isMobile]);
 
-  const fetchFeedbacks = async () => {
+  const fetchFeedbacks = async (uid) => {
     try {
       const feedbackQuery = query(
         collection(db, "feedbacks"),
-        orderBy("timestamp", "desc"),
-        limit(50)
+        where("userId", "==", uid),
+        orderBy("timestamp", "desc")
       );
+
       const querySnapshot = await getDocs(feedbackQuery);
       const fetchedFeedbacks = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
+
       setFeedbacks(fetchedFeedbacks);
     } catch (error) {
       console.error("Error fetching feedbacks:", error);
@@ -51,7 +64,10 @@ const Feedback = () => {
 
   const showNotification = (message, type = "success") => {
     setNotification({ show: true, message, type });
-    setTimeout(() => setNotification({ show: false, message: "", type: "" }), 4000);
+    setTimeout(
+      () => setNotification({ show: false, message: "", type: "" }),
+      4000
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -64,9 +80,12 @@ const Feedback = () => {
     setIsSubmitting(true);
 
     try {
+      const currentUser = auth.currentUser;
       const timestamp = new Date();
+
       const newFeedback = {
-        userName,
+        userName: currentUser.displayName || currentUser.email,
+        userId: currentUser.uid, // 🔹 include userId
         message: message.trim(),
         category,
         date: timestamp.toISOString().split("T")[0],
@@ -75,13 +94,15 @@ const Feedback = () => {
       };
 
       await addDoc(collection(db, "feedbacks"), newFeedback);
-      
-      // Add to the local state without refetching
-      setFeedbacks([{ ...newFeedback, id: Date.now().toString() }, ...feedbacks]);
-      
+
+      // Add to the local state
+      setFeedbacks([
+        { ...newFeedback, id: Date.now().toString() },
+        ...feedbacks,
+      ]);
+
       showNotification("Feedback submitted successfully");
 
-      // Reset form
       setMessage("");
       setCategory("Suggestion");
     } catch (error) {
@@ -98,18 +119,20 @@ const Feedback = () => {
       Bug: { bg: "#FFEBEE", text: "#C62828" },
       Other: { bg: "#E3F2FD", text: "#1565C0" },
     };
-    
+
     const color = badgeColors[category] || badgeColors.Other;
-    
+
     return (
-      <span style={{
-        backgroundColor: color.bg,
-        color: color.text,
-        padding: "4px 8px",
-        borderRadius: "4px",
-        fontSize: "12px",
-        fontWeight: "500",
-      }}>
+      <span
+        style={{
+          backgroundColor: color.bg,
+          color: color.text,
+          padding: "4px 8px",
+          borderRadius: "4px",
+          fontSize: "12px",
+          fontWeight: "500",
+        }}
+      >
         {category}
       </span>
     );
@@ -125,7 +148,7 @@ const Feedback = () => {
       <div
         style={{
           ...styles.container,
-          marginLeft: isMobile ? 0 : (isSidebarOpen ? "260px" : "60px"),
+          marginLeft: isMobile ? 0 : isSidebarOpen ? "260px" : "60px",
           padding: isMobile ? "16px" : "40px",
           overflow: "auto",
         }}
@@ -133,19 +156,21 @@ const Feedback = () => {
         <div style={styles.header}>
           <h1 style={styles.title}>Feedback</h1>
           <div style={styles.tabs}>
-            <button 
+            <button
               style={{
                 ...styles.tabButton,
-                borderBottom: viewMode === "form" ? "2px solid #007bff" : "none",
+                borderBottom:
+                  viewMode === "form" ? "2px solid #007bff" : "none",
               }}
               onClick={() => setViewMode("form")}
             >
               Submit Feedback
             </button>
-            <button 
+            <button
               style={{
                 ...styles.tabButton,
-                borderBottom: viewMode === "history" ? "2px solid #007bff" : "none",
+                borderBottom:
+                  viewMode === "history" ? "2px solid #007bff" : "none",
               }}
               onClick={() => setViewMode("history")}
             >
@@ -158,7 +183,8 @@ const Feedback = () => {
           <div
             style={{
               ...styles.notification,
-              backgroundColor: notification.type === "error" ? "#FFEBEE" : "#E8F5E9",
+              backgroundColor:
+                notification.type === "error" ? "#FFEBEE" : "#E8F5E9",
               color: notification.type === "error" ? "#C62828" : "#2E7D32",
             }}
           >
@@ -203,8 +229,8 @@ const Feedback = () => {
                   ></textarea>
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   style={{
                     ...styles.button,
                     opacity: isSubmitting ? 0.7 : 1,
@@ -297,6 +323,7 @@ const styles = {
   },
   formContainer: {
     marginTop: "20px",
+    width:"800px"
   },
   form: {
     display: "flex",
@@ -313,7 +340,7 @@ const styles = {
     color: "#555",
   },
   input: {
-    width: "100%",
+    width: "97%",
     padding: "10px 12px",
     fontSize: "15px",
     border: "1px solid #e0e0e0",
@@ -330,7 +357,7 @@ const styles = {
     backgroundColor: "#fff",
   },
   textarea: {
-    width: "100%",
+    width: "97%",
     padding: "12px",
     height: "150px",
     fontSize: "15px",

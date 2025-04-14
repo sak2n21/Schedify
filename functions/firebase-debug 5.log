@@ -1,0 +1,16 @@
+[debug] [2025-04-10T11:01:36.003Z] ----------------------------------------------------------------------
+[debug] [2025-04-10T11:01:36.005Z] Command:       /opt/homebrew/Cellar/node/23.10.0/bin/node /opt/homebrew/bin/firebase functions:config:set gmail.user=kokshaoai@gmail.com gmail.pass=nqbe ywms qupj ctda
+[debug] [2025-04-10T11:01:36.006Z] CLI Version:   14.1.0
+[debug] [2025-04-10T11:01:36.006Z] Platform:      darwin
+[debug] [2025-04-10T11:01:36.006Z] Node Version:  v23.10.0
+[debug] [2025-04-10T11:01:36.006Z] Time:          Thu Apr 10 2025 19:01:36 GMT+0800 (Malaysia Time)
+[debug] [2025-04-10T11:01:36.006Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-04-10T11:01:36.077Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-04-10T11:01:36.077Z] > authorizing via signed-in user (kokshaoai@gmail.com)
+[debug] [2025-04-10T11:01:36.077Z] [iam] checking project appointmentapplication-9c371 for permissions ["firebase.projects.get","runtimeconfig.configs.create","runtimeconfig.configs.delete","runtimeconfig.configs.get","runtimeconfig.configs.list","runtimeconfig.configs.update","runtimeconfig.variables.create","runtimeconfig.variables.delete","runtimeconfig.variables.get","runtimeconfig.variables.list","runtimeconfig.variables.update"]
+[debug] [2025-04-10T11:01:36.077Z] Checked if tokens are valid: true, expires at: 1744286260782
+[debug] [2025-04-10T11:01:36.077Z] Checked if tokens are valid: true, expires at: 1744286260782
+[debug] [2025-04-10T11:01:36.078Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions [none]
+[debug] [2025-04-10T11:01:36.078Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions x-goog-quota-user=projects/appointmentapplication-9c371
+[debug] [2025-04-10T11:01:36.078Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions {"permissions":["firebase.projects.get","runtimeconfig.configs.create","runtimeconfig.configs.delete","runtimeconfig.configs.get","runtimeconfig.configs.list","runtimeconfig.configs.update","runtimeconfig.variables.create","runtimeconfig.variables.delete","runtimeconfig.variables.get","runtimeconfig.variables.list","runtimeconfig.variables.update"]}

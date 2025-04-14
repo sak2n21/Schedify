@@ -1,0 +1,16 @@
+[debug] [2025-04-10T10:38:39.467Z] ----------------------------------------------------------------------
+[debug] [2025-04-10T10:38:39.469Z] Command:       /opt/homebrew/Cellar/node/23.10.0/bin/node /opt/homebrew/bin/firebase deploy --only functions
+[debug] [2025-04-10T10:38:39.469Z] CLI Version:   14.1.0
+[debug] [2025-04-10T10:38:39.469Z] Platform:      darwin
+[debug] [2025-04-10T10:38:39.469Z] Node Version:  v23.10.0
+[debug] [2025-04-10T10:38:39.469Z] Time:          Thu Apr 10 2025 18:38:39 GMT+0800 (Malaysia Time)
+[debug] [2025-04-10T10:38:39.469Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-04-10T10:38:39.540Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-04-10T10:38:39.540Z] > authorizing via signed-in user (kokshaoai@gmail.com)
+[debug] [2025-04-10T10:38:39.540Z] [iam] checking project appointmentapplication-9c371 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-04-10T10:38:39.540Z] Checked if tokens are valid: true, expires at: 1744283164190
+[debug] [2025-04-10T10:38:39.540Z] Checked if tokens are valid: true, expires at: 1744283164190
+[debug] [2025-04-10T10:38:39.541Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions [none]
+[debug] [2025-04-10T10:38:39.541Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions x-goog-quota-user=projects/appointmentapplication-9c371
+[debug] [2025-04-10T10:38:39.541Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}

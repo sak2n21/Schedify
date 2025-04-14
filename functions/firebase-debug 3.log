@@ -1,0 +1,180 @@
+[debug] [2025-04-10T05:01:39.365Z] ----------------------------------------------------------------------
+[debug] [2025-04-10T05:01:39.369Z] Command:       /opt/homebrew/Cellar/node/23.10.0/bin/node /opt/homebrew/bin/firebase deploy --only functions
+[debug] [2025-04-10T05:01:39.369Z] CLI Version:   14.1.0
+[debug] [2025-04-10T05:01:39.370Z] Platform:      darwin
+[debug] [2025-04-10T05:01:39.370Z] Node Version:  v23.10.0
+[debug] [2025-04-10T05:01:39.370Z] Time:          Thu Apr 10 2025 13:01:39 GMT+0800 (Malaysia Time)
+[debug] [2025-04-10T05:01:39.370Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-04-10T05:01:39.440Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-04-10T05:01:39.440Z] > authorizing via signed-in user (kokshaoai@gmail.com)
+[debug] [2025-04-10T05:01:39.440Z] [iam] checking project appointmentapplication-9c371 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-04-10T05:01:39.441Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:39.441Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:39.441Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions [none]
+[debug] [2025-04-10T05:01:39.441Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions x-goog-quota-user=projects/appointmentapplication-9c371
+[debug] [2025-04-10T05:01:39.441Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-04-10T05:01:40.576Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions 200
+[debug] [2025-04-10T05:01:40.576Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-04-10T05:01:40.577Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:40.577Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:40.577Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/appointmentapplication-9c371/serviceAccounts/appointmentapplication-9c371@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-04-10T05:01:40.577Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/appointmentapplication-9c371/serviceAccounts/appointmentapplication-9c371@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-04-10T05:01:41.942Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/appointmentapplication-9c371/serviceAccounts/appointmentapplication-9c371@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-04-10T05:01:41.942Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/appointmentapplication-9c371/serviceAccounts/appointmentapplication-9c371@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'appointmentapplication-9c371'...
+[info] 
+[info] i  deploying functions 
+[debug] [2025-04-10T05:01:41.945Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:41.945Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:41.945Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371 [none]
+[debug] [2025-04-10T05:01:42.250Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371 200
+[debug] [2025-04-10T05:01:42.250Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371 {"projectNumber":"191339301810","projectId":"appointmentapplication-9c371","lifecycleState":"ACTIVE","name":"AppointmentApplication","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-03-11T03:36:42.197701Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[debug] [2025-04-10T05:01:42.252Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:42.252Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:42.252Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:42.252Z] Checked if tokens are valid: true, expires at: 1744264477270
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[debug] [2025-04-10T05:01:42.252Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:42.252Z] Checked if tokens are valid: true, expires at: 1744264477270
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-04-10T05:01:42.253Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:42.253Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:42.253Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-04-10T05:01:42.253Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/appointmentapplication-9c371
+[debug] [2025-04-10T05:01:42.254Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/runtimeconfig.googleapis.com [none]
+[debug] [2025-04-10T05:01:42.254Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/appointmentapplication-9c371
+[debug] [2025-04-10T05:01:42.255Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/cloudbuild.googleapis.com [none]
+[debug] [2025-04-10T05:01:42.256Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/cloudbuild.googleapis.com x-goog-quota-user=projects/appointmentapplication-9c371
+[debug] [2025-04-10T05:01:42.256Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/artifactregistry.googleapis.com [none]
+[debug] [2025-04-10T05:01:42.256Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/artifactregistry.googleapis.com x-goog-quota-user=projects/appointmentapplication-9c371
+[debug] [2025-04-10T05:01:47.197Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/runtimeconfig.googleapis.com 200
+[debug] [2025-04-10T05:01:47.197Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2025-04-10T05:01:47.199Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/artifactregistry.googleapis.com 200
+[debug] [2025-04-10T05:01:47.199Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/artifactregistry.googleapis.com [omitted]
+[info] ✔  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2025-04-10T05:01:47.200Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/cloudbuild.googleapis.com 200
+[debug] [2025-04-10T05:01:47.200Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/cloudbuild.googleapis.com [omitted]
+[info] ✔  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2025-04-10T05:01:47.235Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/cloudfunctions.googleapis.com 200
+[debug] [2025-04-10T05:01:47.235Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/cloudfunctions.googleapis.com [omitted]
+[info] ✔  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2025-04-10T05:01:47.235Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:47.235Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:47.235Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/appointmentapplication-9c371/adminSdkConfig [none]
+[debug] [2025-04-10T05:01:48.607Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/appointmentapplication-9c371/adminSdkConfig 200
+[debug] [2025-04-10T05:01:48.607Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/appointmentapplication-9c371/adminSdkConfig {"projectId":"appointmentapplication-9c371","storageBucket":"appointmentapplication-9c371.firebasestorage.app"}
+[debug] [2025-04-10T05:01:48.608Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:48.608Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:48.608Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs [none]
+[debug] [2025-04-10T05:01:49.007Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs 200
+[debug] [2025-04-10T05:01:49.007Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs {"configs":[{"name":"projects/appointmentapplication-9c371/configs/gmail"}]}
+[debug] [2025-04-10T05:01:49.008Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:49.008Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:49.008Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables [none]
+[debug] [2025-04-10T05:01:49.291Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables 200
+[debug] [2025-04-10T05:01:49.291Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables {"variables":[{"name":"projects/appointmentapplication-9c371/configs/gmail/variables/email","updateTime":"2025-04-10T04:04:32.000415760Z"},{"name":"projects/appointmentapplication-9c371/configs/gmail/variables/pass","updateTime":"2025-04-10T04:54:49.419666166Z"},{"name":"projects/appointmentapplication-9c371/configs/gmail/variables/password","updateTime":"2025-04-10T04:04:32.661602626Z"},{"name":"projects/appointmentapplication-9c371/configs/gmail/variables/user","updateTime":"2025-04-10T04:54:49.453213807Z"}]}
+[debug] [2025-04-10T05:01:49.292Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:49.292Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:49.292Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:49.292Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:49.292Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:49.292Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:49.292Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:49.292Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:49.292Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/email [none]
+[debug] [2025-04-10T05:01:49.293Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/pass [none]
+[debug] [2025-04-10T05:01:49.295Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/password [none]
+[debug] [2025-04-10T05:01:49.297Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/user [none]
+[debug] [2025-04-10T05:01:49.551Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/email 200
+[debug] [2025-04-10T05:01:49.551Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/email {"name":"projects/appointmentapplication-9c371/configs/gmail/variables/email","updateTime":"2025-04-10T04:04:32.000415760Z","text":"kokshaoai@gmail.com"}
+[debug] [2025-04-10T05:01:49.611Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/user 200
+[debug] [2025-04-10T05:01:49.611Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/user {"name":"projects/appointmentapplication-9c371/configs/gmail/variables/user","updateTime":"2025-04-10T04:54:49.453213807Z","text":"kokshaoai@gmail.com"}
+[debug] [2025-04-10T05:01:49.612Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/password 200
+[debug] [2025-04-10T05:01:49.612Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/password {"name":"projects/appointmentapplication-9c371/configs/gmail/variables/password","updateTime":"2025-04-10T04:04:32.661602626Z","text":"1234567"}
+[debug] [2025-04-10T05:01:49.779Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/pass 200
+[debug] [2025-04-10T05:01:49.779Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/appointmentapplication-9c371/configs/gmail/variables/pass {"name":"projects/appointmentapplication-9c371/configs/gmail/variables/pass","updateTime":"2025-04-10T04:54:49.419666166Z","text":"1234567"}
+[debug] [2025-04-10T05:01:49.781Z] Validating nodejs source
+[warn] ⚠  functions: Runtime Node.js 18 will be deprecated on 2025-04-30 and will be decommissioned on 2025-10-31, after which you will not be able to deploy without upgrading. Consider upgrading now to avoid disruption. See https://cloud.google.com/functions/docs/runtime-support for full details on the lifecycle policy 
+[warn] ⚠  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] ⚠  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2025-04-10T05:01:50.200Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^5.1.0",
+    "nodemailer": "^6.9.8"
+  },
+  "private": true
+}
+[debug] [2025-04-10T05:01:50.200Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2025-04-10T05:01:50.200Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-04-10T05:01:50.204Z] Found firebase-functions binary at '/Users/kokshaoai/Desktop/Cloud Application Development/AppointmentApplication/new-app/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8052
+
+[debug] [2025-04-10T05:01:50.605Z] Got response from /__/functions.yaml {"endpoints":{"sendReminderEmail":{"availableMemoryMb":512,"timeoutSeconds":60,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["us-central1"],"secretEnvironmentVariables":[{"key":"GMAIL_USER"},{"key":"GMAIL_PASS"}],"labels":{},"eventTrigger":{"eventType":"google.cloud.firestore.document.v1.created","eventFilters":{"database":"(default)","namespace":"(default)"},"eventFilterPathPatterns":{"document":"schedules/{scheduleId}"},"retry":false},"entryPoint":"sendReminderEmail"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{},"params":[{"type":"secret","name":"GMAIL_USER"},{"type":"secret","name":"GMAIL_PASS"}]}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2025-04-10T05:01:54.625Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:54.625Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:54.626Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/firebaseextensions.googleapis.com [none]
+[debug] [2025-04-10T05:01:54.626Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/firebaseextensions.googleapis.com x-goog-quota-user=projects/appointmentapplication-9c371
+[debug] [2025-04-10T05:01:59.635Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/firebaseextensions.googleapis.com 200
+[debug] [2025-04-10T05:01:59.636Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/appointmentapplication-9c371/services/firebaseextensions.googleapis.com [omitted]
+[info] ✔  extensions: required API firebaseextensions.googleapis.com is enabled 
+[debug] [2025-04-10T05:01:59.636Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-04-10T05:01:59.636Z] > authorizing via signed-in user (kokshaoai@gmail.com)
+[debug] [2025-04-10T05:01:59.636Z] [iam] checking project appointmentapplication-9c371 for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2025-04-10T05:01:59.636Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:59.636Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:01:59.637Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions [none]
+[debug] [2025-04-10T05:01:59.637Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions x-goog-quota-user=projects/appointmentapplication-9c371
+[debug] [2025-04-10T05:01:59.637Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-04-10T05:02:00.749Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions 200
+[debug] [2025-04-10T05:02:00.749Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/appointmentapplication-9c371:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-04-10T05:02:00.750Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:00.750Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:00.750Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/appointmentapplication-9c371/instances pageSize=100&pageToken=
+[debug] [2025-04-10T05:02:02.041Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/appointmentapplication-9c371/instances 200
+[debug] [2025-04-10T05:02:02.041Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/appointmentapplication-9c371/instances {}
+[debug] [2025-04-10T05:02:02.043Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:02.043Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:02.043Z] >>> [apiv2][query] GET https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets/GMAIL_USER [none]
+[debug] [2025-04-10T05:02:02.419Z] <<< [apiv2][status] GET https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets/GMAIL_USER 404
+[debug] [2025-04-10T05:02:02.419Z] <<< [apiv2][body] GET https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets/GMAIL_USER {"error":{"code":404,"message":"Secret [projects/191339301810/secrets/GMAIL_USER] not found.","status":"NOT_FOUND"}}
+[debug] [2025-04-10T05:02:28.917Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:28.918Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:28.918Z] >>> [apiv2][query] POST https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets secretId=GMAIL_USER
+[debug] [2025-04-10T05:02:28.918Z] >>> [apiv2][body] POST https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets {"name":"GMAIL_USER","replication":{"automatic":{}},"labels":{"firebase-managed":"functions"}}
+[debug] [2025-04-10T05:02:30.851Z] <<< [apiv2][status] POST https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets 200
+[debug] [2025-04-10T05:02:30.852Z] <<< [apiv2][body] POST https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets {"name":"projects/191339301810/secrets/GMAIL_USER","replication":{"automatic":{}},"createTime":"2025-04-10T05:02:30.762756Z","labels":{"firebase-managed":"functions"},"etag":"\"1632657e352904\""}
+[debug] [2025-04-10T05:02:30.853Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:30.854Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:30.854Z] >>> [apiv2][query] POST https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets/GMAIL_USER:addVersion [none]
+[debug] [2025-04-10T05:02:30.854Z] >>> [apiv2][body] POST https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets/GMAIL_USER:addVersion {"payload":{"data":"a29rc2hhb2FpQGdtYWlsLmNvbQ=="}}
+[debug] [2025-04-10T05:02:34.884Z] <<< [apiv2][status] POST https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets/GMAIL_USER:addVersion 200
+[debug] [2025-04-10T05:02:34.884Z] <<< [apiv2][body] POST https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets/GMAIL_USER:addVersion {"name":"projects/191339301810/secrets/GMAIL_USER/versions/1","createTime":"2025-04-10T05:02:34.818905Z","state":"ENABLED","replicationStatus":{"automatic":{}},"etag":"\"1632657e730d59\""}
+[debug] [2025-04-10T05:02:34.884Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:34.885Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:34.885Z] >>> [apiv2][query] GET https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets/GMAIL_PASS [none]
+[debug] [2025-04-10T05:02:35.170Z] <<< [apiv2][status] GET https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets/GMAIL_PASS 404
+[debug] [2025-04-10T05:02:35.170Z] <<< [apiv2][body] GET https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets/GMAIL_PASS {"error":{"code":404,"message":"Secret [projects/191339301810/secrets/GMAIL_PASS] not found.","status":"NOT_FOUND"}}
+[debug] [2025-04-10T05:02:42.125Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:42.125Z] Checked if tokens are valid: true, expires at: 1744264477270
+[debug] [2025-04-10T05:02:42.125Z] >>> [apiv2][query] POST https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets secretId=GMAIL_PASS
+[debug] [2025-04-10T05:02:42.125Z] >>> [apiv2][body] POST https://secretmanager.googleapis.com/v1/projects/appointmentapplication-9c371/secrets {"name":"GMAIL_PASS","replication":{"automatic":{}},"labels":{"firebase-managed":"functions"}}

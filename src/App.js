@@ -6,6 +6,13 @@ import ManageSchedule from "./pages/ManageSchedule";
 import ViewSchedule from "./pages/ViewSchedule";
 import Feedback from "./pages/Feedback";
 import Dashboard from "./pages/Dashboard";
+import VerifyEmail from "./pages/VerifiesEmail";
+import emailjs from '@emailjs/browser';
+import ContactForm from "./pages/ContactForm";
+
+// Initialize at the start, outside of any component
+emailjs.init("wcwEuLp9fqmUlhoXd");
+
 
 const App = () => {
   return (
@@ -17,6 +24,8 @@ const App = () => {
         <Route path="/view-schedule" element={<ViewSchedule />} />
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/Dashboard" element={<Dashboard />} />
+        <Route path='/verify-email' element={<VerifyEmail />} />
+        <Route path="/contact" element={<ContactForm />} />
       </Routes>
     </Router>
   );

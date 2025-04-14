@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "appointmentapplication-9c371",
+    "production": "appointmentapplication-9c371"
+  },
+  "targets": {},
+  "etags": {}
+}
