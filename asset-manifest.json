@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/schedify/static/css/main.e6c13ad2.css",
-    "main.js": "/schedify/static/js/main.7ec14e03.js",
-    "static/js/453.2838e13c.chunk.js": "/schedify/static/js/453.2838e13c.chunk.js",
-    "index.html": "/schedify/index.html",
-    "main.e6c13ad2.css.map": "/schedify/static/css/main.e6c13ad2.css.map",
-    "main.7ec14e03.js.map": "/schedify/static/js/main.7ec14e03.js.map",
-    "453.2838e13c.chunk.js.map": "/schedify/static/js/453.2838e13c.chunk.js.map"
+    "main.css": "/Schedify/static/css/main.e6c13ad2.css",
+    "main.js": "/Schedify/static/js/main.83c629ef.js",
+    "static/js/453.2838e13c.chunk.js": "/Schedify/static/js/453.2838e13c.chunk.js",
+    "index.html": "/Schedify/index.html",
+    "main.e6c13ad2.css.map": "/Schedify/static/css/main.e6c13ad2.css.map",
+    "main.83c629ef.js.map": "/Schedify/static/js/main.83c629ef.js.map",
+    "453.2838e13c.chunk.js.map": "/Schedify/static/js/453.2838e13c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.7ec14e03.js"
+    "static/js/main.83c629ef.js"
   ]
 }
