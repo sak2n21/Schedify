@@ -41,6 +41,7 @@ const ManageSchedule = () => {
     date: "",
     scheduleTime: "",
     reminderTime: "",
+    reminderDate: "",
   });
 
   // Firebase reference
@@ -60,14 +61,15 @@ const ManageSchedule = () => {
       priority: "low",
       reminder: true,
     };
-  
+
     setSending(true);
     setError(null);
-  
+
     // Use a CORS proxy for development
-    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-    const functionUrl = 'https://us-central1-appointmentapplication-9c371.cloudfunctions.net/sendReminderNow';
-    
+    const corsProxy = "https://cors-anywhere.herokuapp.com/";
+    const functionUrl =
+      "https://us-central1-appointmentapplication-9c371.cloudfunctions.net/sendReminderNow";
+
     try {
       // Make the request through the CORS proxy
       const response = await axios.post(
@@ -75,22 +77,28 @@ const ManageSchedule = () => {
         reminderPayload,
         {
           headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest' // Required by some CORS proxies
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest", // Required by some CORS proxies
           },
-          timeout: 10000
+          timeout: 10000,
         }
       );
-      
+
       console.log("Response:", response.data);
       alert("Reminder sent successfully!");
     } catch (error) {
       console.error("Error sending reminder:", error);
-      
+
       if (error.response) {
-        setError(`Server error (${error.response.status}): ${error.response.data.message || JSON.stringify(error.response.data)}`);
+        setError(
+          `Server error (${error.response.status}): ${
+            error.response.data.message || JSON.stringify(error.response.data)
+          }`
+        );
       } else if (error.request) {
-        setError("No response from server. The Firebase function may be unavailable.");
+        setError(
+          "No response from server. The Firebase function may be unavailable."
+        );
       } else {
         setError(`Request setup error: ${error.message}`);
       }
@@ -184,6 +192,7 @@ const ManageSchedule = () => {
     setFormData({
       ...formData,
       date: calendarInfo.dateStr,
+      reminderDate: calendarInfo.dateStr, // Set the reminder date same as schedule date by default
     });
     setIsModalOpen(true);
   };
@@ -202,6 +211,8 @@ const ManageSchedule = () => {
         date: clickedSchedule.date || "",
         scheduleTime: clickedSchedule.scheduleTime || "",
         reminderTime: clickedSchedule.reminderTime || "",
+        reminderDate:
+          clickedSchedule.reminderDate || clickedSchedule.date || "", // Use reminderDate if available, fallback to date
       });
       setIsModalOpen(true);
     }
@@ -217,6 +228,7 @@ const ManageSchedule = () => {
       date: "",
       scheduleTime: "",
       reminderTime: "",
+      reminderDate: "",
     });
     setSelectedSchedule(null);
   };
@@ -229,7 +241,15 @@ const ManageSchedule = () => {
 
   // Handle reminder checkbox change
   const handleReminderChange = (e) => {
-    setFormData({ ...formData, reminder: e.target.checked });
+    setFormData({
+      ...formData,
+      reminder: e.target.checked,
+      // Set reminderDate to the same as the schedule date if it's empty and checkbox is checked
+      reminderDate:
+        e.target.checked && !formData.reminderDate
+          ? formData.date
+          : formData.reminderDate,
+    });
   };
 
   const saveSchedule = async () => {
@@ -244,6 +264,7 @@ const ManageSchedule = () => {
     // Only require reminderTime if reminder is true
     if (formData.reminder) {
       requiredFields.push("reminderTime");
+      requiredFields.push("reminderDate");
     }
 
     console.log("Form Data:", formData);
@@ -265,6 +286,7 @@ const ManageSchedule = () => {
         date: formData.date,
         scheduleTime: formData.scheduleTime,
         reminderTime: formData.reminderTime, // Ensure reminderTime is included
+        reminderDate: formData.reminderDate,
         userId: userId, // Add the user ID to the schedule
       };
 
@@ -286,13 +308,13 @@ const ManageSchedule = () => {
       }
 
       // Optional: Prevent scheduling in the past
-      // const selectedDateTime = new Date(
-      //   `${formData.date}T${formData.scheduleTime}`
-      // );
-      // if (selectedDateTime < new Date()) {
-      //   alert("Cannot schedule a task in the past.");
-      //   return;
-      // }
+      const selectedDateTime = new Date(
+        `${formData.date}T${formData.scheduleTime}`
+      );
+      if (selectedDateTime < new Date()) {
+        alert("Cannot schedule a task in the past.");
+        return;
+      }
 
       if (selectedSchedule) {
         // Update existing schedule
@@ -316,6 +338,7 @@ const ManageSchedule = () => {
             date: formData.date,
             scheduleTime: formData.scheduleTime,
             reminderTime: formData.reminderTime,
+            reminderDate: formData.reminderDate,
             email: auth.currentUser.email, // Use auth.currentUser.email here
           };
 
@@ -340,7 +363,7 @@ const ManageSchedule = () => {
       const payload = {
         email: reminderPayload.email,
         subject: `Reminder: ${reminderPayload.title} on ${reminderPayload.date} at ${reminderPayload.scheduleTime}`,
-        body: `This is a reminder for your scheduled task: ${reminderPayload.title}\nScheduled for: ${reminderPayload.date} at ${reminderPayload.scheduleTime}\nReminder Time: ${reminderPayload.reminderTime}`,
+        body: `This is a reminder for your scheduled task: ${reminderPayload.title}\nScheduled for: ${reminderPayload.date} at ${reminderPayload.scheduleTime}\nReminder Date: ${reminderPayload.reminderDate}\nReminder Time: ${reminderPayload.reminderTime}`,
       };
 
       // Call your backend or email service to send the email
@@ -517,6 +540,7 @@ const ManageSchedule = () => {
                   reminder: schedule.reminder,
                   scheduleTime: schedule.scheduleTime,
                   reminderTime: schedule.reminderTime,
+                  reminderDate: schedule.reminderDate,
                 },
               }))}
               eventContent={(arg) => (
@@ -897,14 +921,18 @@ const ManageSchedule = () => {
 
                   {/* Only show reminder time input when reminder checkbox is checked */}
                   {formData.reminder && (
-                    <div style={styles.formGroup}>
-                      {/* <label
+                    <>
+                      <input
+                        type="date"
+                        name="reminderDate"
+                        value={formData.reminderDate}
+                        onChange={handleInputChange}
                         style={
-                          isDarkMode ? darkStyles.formLabel : styles.formLabel
+                          isDarkMode ? darkStyles.formInput : styles.formInput
                         }
-                      >
-                        Reminder Time<span style={isDarkMode ? darkStyles.requiredStar : styles.requiredStar}>*</span>
-                      </label> */}
+                      />
+
+                      {/* Your existing reminderTime input remains here */}
                       <input
                         type="time"
                         name="reminderTime"
@@ -914,7 +942,7 @@ const ManageSchedule = () => {
                           isDarkMode ? darkStyles.formInput : styles.formInput
                         }
                       />
-                    </div>
+                    </>
                   )}
                 </div>
 
