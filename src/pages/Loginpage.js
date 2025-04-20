@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { auth, db } from "../firebase";
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
+import { doc, getDoc,setDoc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,15 +14,21 @@ const Login = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const googleProvider = new GoogleAuthProvider();
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-    
+
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       // Check if the email is verified
@@ -46,15 +56,23 @@ const Login = () => {
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
+    setError("");
+    
     if (!email) {
       setError("Please enter your email address to reset your password.");
       return;
     }
-
+  
     setIsLoading(true);
     try {
-      await sendPasswordResetEmail(auth, email);
-      alert("Password reset email sent! Please check your inbox.");
+      // Create action code settings with redirect URL
+      const actionCodeSettings = {
+        url: window.location.origin + '/', // This will direct back to your login page
+        handleCodeInApp: false
+      };
+      
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      alert("Password reset email sent! Please check your inbox and spam folder.");
     } catch (error) {
       setError(error.message.replace("Firebase: ", ""));
     } finally {
@@ -66,6 +84,31 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // Save user to Firestore if it’s their first time logging in
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+      });
+
+      alert("Signed in successfully with Google!");
+      navigate("/dashboard"); // Change this to your desired landing page
+    } catch (error) {
+      console.error("Google Sign-In Error:", error.message);
+      setError("Failed to sign in with Google.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div style={styles.background}>
       <div style={styles.container}>
@@ -73,18 +116,22 @@ const Login = () => {
           <div style={styles.logoContainer}>
             <h1 style={styles.logo}>SCHEDIFY</h1>
           </div>
-          
+
           <div style={styles.formContainer}>
             <h2 style={styles.title}>Sign in</h2>
             <p style={styles.subtitle}>to continue to your workspace</p>
-          
-            {error && <div style={styles.errorContainer}>
-              <p style={styles.errorText}>{error}</p>
-            </div>}
-            
+
+            {error && (
+              <div style={styles.errorContainer}>
+                <p style={styles.errorText}>{error}</p>
+              </div>
+            )}
+
             <form onSubmit={handleLogin} style={styles.form}>
               <div style={styles.inputGroup}>
-                <label htmlFor="email" style={styles.label}>Email</label>
+                <label htmlFor="email" style={styles.label}>
+                  Email
+                </label>
                 <input
                   id="email"
                   type="email"
@@ -95,9 +142,11 @@ const Login = () => {
                   placeholder="name@example.com"
                 />
               </div>
-              
+
               <div style={styles.inputGroup}>
-                <label htmlFor="password" style={styles.label}>Password</label>
+                <label htmlFor="password" style={styles.label}>
+                  Password
+                </label>
                 <div style={styles.passwordInputContainer}>
                   <input
                     id="password"
@@ -108,8 +157,8 @@ const Login = () => {
                     style={styles.passwordInput}
                     placeholder="••••••••"
                   />
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={togglePasswordVisibility}
                     style={styles.passwordToggle}
                   >
@@ -117,7 +166,7 @@ const Login = () => {
                   </button>
                 </div>
               </div>
-              
+
               <div style={styles.forgotPasswordContainer}>
                 <a
                   href="#"
@@ -127,29 +176,39 @@ const Login = () => {
                   Forgot password?
                 </a>
               </div>
-              
-              <button 
-                type="submit" 
-                style={isLoading ? {...styles.button, ...styles.buttonLoading} : styles.button}
+
+              <button
+                type="submit"
+                style={
+                  isLoading
+                    ? { ...styles.button, ...styles.buttonLoading }
+                    : styles.button
+                }
                 disabled={isLoading}
               >
                 {isLoading ? "Signing in..." : "Sign in"}
               </button>
             </form>
-            
+
             <div style={styles.divider}>
               <span style={styles.dividerLine}></span>
               <span style={styles.dividerText}>or</span>
               <span style={styles.dividerLine}></span>
             </div>
-            
+
             <Link to="/signup" style={styles.createAccountButton}>
               Create new account
             </Link>
+
+            <button onClick={handleGoogleSignIn} style={styles.googleButton}>
+              Continue with Google
+            </button>
           </div>
-          
+
           <div style={styles.footer}>
-            <p style={styles.footerText}>© 2025 SCHEDIFY. All rights reserved.</p>
+            <p style={styles.footerText}>
+              © 2025 SCHEDIFY. All rights reserved.
+            </p>
           </div>
         </div>
       </div>
@@ -165,7 +224,8 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+    fontFamily:
+      "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
   },
   container: {
     maxWidth: "480px",
@@ -173,7 +233,8 @@ const styles = {
     minHeight: "500px",
     borderRadius: "12px",
     overflow: "hidden",
-    boxShadow: "rgba(15, 15, 15, 0.03) 0px 0px 0px 1px, rgba(15, 15, 15, 0.04) 0px 3px 6px, rgba(15, 15, 15, 0.05) 0px 9px 24px",
+    boxShadow:
+      "rgba(15, 15, 15, 0.03) 0px 0px 0px 1px, rgba(15, 15, 15, 0.04) 0px 3px 6px, rgba(15, 15, 15, 0.05) 0px 9px 24px",
     backgroundColor: "white",
   },
   logoContainer: {
@@ -263,7 +324,7 @@ const styles = {
     color: "#6b6b6b",
     fontSize: "12px",
     cursor: "pointer",
-    padding: "2px 5px", 
+    padding: "2px 5px",
     fontWeight: "500",
   },
   forgotPasswordContainer: {
@@ -347,7 +408,17 @@ const styles = {
     fontSize: "12px",
     color: "#6b6b6b",
     margin: 0,
-  }
+  },
+  googleButton: {
+    backgroundColor: "#ffffff",
+    color: "#000",
+    border: "1px solid #ddd",
+    padding: "10px 15px",
+    borderRadius: "5px",
+    cursor: "pointer",
+    width: "100%",
+    marginTop: "10px",
+  },
 };
 
 export default Login;

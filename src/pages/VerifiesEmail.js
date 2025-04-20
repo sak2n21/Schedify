@@ -3,31 +3,31 @@ import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
 const VerifyEmail = () => {
-  const [checking, setChecking] = useState(false);
   const navigate = useNavigate();
+  const [checking, setChecking] = useState(true);
 
-  const handleCheck = async () => {
-    setChecking(true);
-    await auth.currentUser.reload();
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      await auth.currentUser?.reload(); // reload user data
 
-    if (auth.currentUser.emailVerified) {
-      alert("Email verified successfully!");
-      navigate("/dashboard");
-    } else {
-      alert("Email not verified yet. Please check your inbox.");
-    }
+      if (auth.currentUser?.emailVerified) {
+        clearInterval(interval);
+        alert("✅ Email verified successfully!");
+        navigate("/");
+      }
 
-    setChecking(false);
-  };
+      setChecking(false);
+    }, 3000); // check every 3 seconds
+
+    return () => clearInterval(interval); // clean up on unmount
+  }, [navigate]);
 
   return (
     <div style={styles.container}>
       <h2>Email Verification</h2>
       <p>A verification link has been sent to your email.</p>
-      <p>Please click the link and then press the button below:</p>
-      <button onClick={handleCheck} disabled={checking} style={styles.button}>
-        {checking ? "Checking..." : "I have verified"}
-      </button>
+      <p>Please click the link and we’ll redirect you once it's verified.</p>
+      {checking && <p>⏳ Waiting for verification...</p>}
     </div>
   );
 };

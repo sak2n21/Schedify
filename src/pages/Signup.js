@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/
 import { doc, setDoc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 
+
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,8 +28,8 @@ const Signup = () => {
       // Step 2: Send email verification with a redirect URL to the dashboard
       const actionCodeSettings = {
         // URL to redirect to after email verification
-        url: `${window.location.origin}/dashboard`,
-        handleCodeInApp: true,
+        url: `${window.location.origin}/#/verify-email`,
+        handleCodeInApp: false,
       };
       
       await sendEmailVerification(user, actionCodeSettings);
