@@ -3,6 +3,16 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { trackAppInitialization } from './utils/performance';
+import { logSystemEvent, LOG_SEVERITY } from './utils/logging';
+
+// Initialize performance monitoring
+trackAppInitialization();
+
+// Log application start
+logSystemEvent('Application started', 'info', {
+  startTime: new Date().toISOString()
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

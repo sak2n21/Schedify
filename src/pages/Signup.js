@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { auth, db } from "../firebase";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
-
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -12,6 +14,7 @@ const Signup = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState("");
   const navigate = useNavigate();
 
   // EMAIL/PASSWORD SIGNUP
@@ -19,10 +22,14 @@ const Signup = () => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-    
+
     try {
       // Step 1: Create user with email/password
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       // Step 2: Send email verification with a redirect URL to the dashboard
@@ -31,7 +38,7 @@ const Signup = () => {
         url: `${window.location.origin}/#/verify-email`,
         handleCodeInApp: false,
       };
-      
+
       await sendEmailVerification(user, actionCodeSettings);
       console.log("Verification email sent to:", user.email);
 
@@ -40,14 +47,18 @@ const Signup = () => {
         uid: user.uid,
         name,
         email,
+        phone,
       });
 
-      alert("Signup successful! A verification email has been sent. Please check your inbox.");
+      alert(
+        "Signup successful! A verification email has been sent. Please check your inbox."
+      );
       navigate("/verify-email");
-
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
-        setError("The email is already in use. Please try logging in or use a different email.");
+        setError(
+          "The email is already in use. Please try logging in or use a different email."
+        );
       } else {
         console.error("Error: ", error.message); // Debug: Log errors
         setError(error.message.replace("Firebase: ", ""));
@@ -68,18 +79,22 @@ const Signup = () => {
           <div style={styles.logoContainer}>
             <h1 style={styles.logo}>SCHEDIFY</h1>
           </div>
-          
+
           <div style={styles.formContainer}>
             <h2 style={styles.title}>Create account</h2>
             <p style={styles.subtitle}>to start managing your schedule</p>
-          
-            {error && <div style={styles.errorContainer}>
-              <p style={styles.errorText}>{error}</p>
-            </div>}
-            
+
+            {error && (
+              <div style={styles.errorContainer}>
+                <p style={styles.errorText}>{error}</p>
+              </div>
+            )}
+
             <form onSubmit={handleSignup} style={styles.form}>
               <div style={styles.inputGroup}>
-                <label htmlFor="name" style={styles.label}>Full Name</label>
+                <label htmlFor="name" style={styles.label}>
+                  Full Name
+                </label>
                 <input
                   id="name"
                   type="text"
@@ -90,9 +105,11 @@ const Signup = () => {
                   placeholder="John Doe"
                 />
               </div>
-              
+
               <div style={styles.inputGroup}>
-                <label htmlFor="email" style={styles.label}>Email</label>
+                <label htmlFor="email" style={styles.label}>
+                  Email
+                </label>
                 <input
                   id="email"
                   type="email"
@@ -103,9 +120,11 @@ const Signup = () => {
                   placeholder="name@example.com"
                 />
               </div>
-              
+
               <div style={styles.inputGroup}>
-                <label htmlFor="password" style={styles.label}>Password</label>
+                <label htmlFor="password" style={styles.label}>
+                  Password
+                </label>
                 <div style={styles.passwordInputContainer}>
                   <input
                     id="password"
@@ -116,8 +135,8 @@ const Signup = () => {
                     style={styles.passwordInput}
                     placeholder="••••••••"
                   />
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={togglePasswordVisibility}
                     style={styles.passwordToggle}
                   >
@@ -125,29 +144,50 @@ const Signup = () => {
                   </button>
                 </div>
               </div>
-              
-              <button 
-                type="submit" 
-                style={isLoading ? {...styles.button, ...styles.buttonLoading} : styles.button}
+
+              <div style={styles.inputGroup}>
+                <label htmlFor="phone" style={styles.label}>
+                  Phone Number
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                  style={styles.input}
+                  placeholder="+1234567890"
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={
+                  isLoading
+                    ? { ...styles.button, ...styles.buttonLoading }
+                    : styles.button
+                }
                 disabled={isLoading}
               >
                 {isLoading ? "Creating account..." : "Create account"}
               </button>
             </form>
-            
+
             <div style={styles.divider}>
               <span style={styles.dividerLine}></span>
               <span style={styles.dividerText}>or</span>
               <span style={styles.dividerLine}></span>
             </div>
-            
+
             <Link to="/" style={styles.loginButton}>
               Sign in to existing account
             </Link>
           </div>
-          
+
           <div style={styles.footer}>
-            <p style={styles.footerText}>© 2025 SCHEDIFY. All rights reserved.</p>
+            <p style={styles.footerText}>
+              © 2025 SCHEDIFY. All rights reserved.
+            </p>
           </div>
         </div>
       </div>
@@ -163,7 +203,8 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+    fontFamily:
+      "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
   },
   container: {
     maxWidth: "480px",
@@ -171,7 +212,8 @@ const styles = {
     minHeight: "500px",
     borderRadius: "12px",
     overflow: "hidden",
-    boxShadow: "rgba(15, 15, 15, 0.03) 0px 0px 0px 1px, rgba(15, 15, 15, 0.04) 0px 3px 6px, rgba(15, 15, 15, 0.05) 0px 9px 24px",
+    boxShadow:
+      "rgba(15, 15, 15, 0.03) 0px 0px 0px 1px, rgba(15, 15, 15, 0.04) 0px 3px 6px, rgba(15, 15, 15, 0.05) 0px 9px 24px",
     backgroundColor: "white",
   },
   logoContainer: {
@@ -333,7 +375,7 @@ const styles = {
     fontSize: "12px",
     color: "#6b6b6b",
     margin: 0,
-  }
+  },
 };
 
 export default Signup;

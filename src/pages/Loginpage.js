@@ -4,52 +4,239 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { doc, getDoc,setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [showVerificationCodeInput, ] =
+    useState(false);
+  const [, setCurrentUser] = useState(null);
+  // const [expectedCode, setExpectedCode] = useState("");
   const googleProvider = new GoogleAuthProvider();
 
   const navigate = useNavigate();
 
+  // // Generate a random 6-digit code
+  // const generateRandomCode = () => {
+  //   return Math.floor(100000 + Math.random() * 900000).toString();
+  // };
+
+  // Send verification email with OTP code
+  // Change this function to accept a userId parameter instead of using currentUser
+  // const sendVerificationEmail = async (userEmail, code, userId) => {
+  //   try {
+  //     if (!userId) {
+  //       throw new Error("User ID is required");
+  //     }
+
+  //     // Store the code in Firestore using the passed userId
+  //     await updateDoc(doc(db, "users", userId), {
+  //       mfaCode: code,
+  //       mfaCodeTimestamp: Date.now(),
+  //     });
+
+  //     // Rest of the function...
+  //     alert(
+  //       `Your verification code is ${code}`
+  //     );
+
+  //     return true;
+  //   } catch (error) {
+  //     console.error("Error sending verification email:", error);
+  //     return false;
+  //   }
+  // };
+
+  // // Handle verification code submission
+  // const handleVerifyCode = async () => {
+  //   try {
+  //     setIsLoading(true);
+
+  //     if (!currentUser) {
+  //       setError("User session expired. Please log in again.");
+  //       setIsLoading(false);
+  //       return;
+  //     }
+
+  //     // Get the stored code and timestamp from Firestore
+  //     const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+  //     const userData = userDoc.data();
+
+  //     if (!userData.mfaCode) {
+  //       setError("No verification code found. Please request a new code.");
+  //       setIsLoading(false);
+  //       return;
+  //     }
+
+  //     // Check if code is expired (15 minutes)
+  //     const codeTimestamp = userData.mfaCodeTimestamp;
+  //     const currentTime = Date.now();
+  //     const fifteenMinutesInMs = 15 * 60 * 1000;
+
+  //     if (currentTime - codeTimestamp > fifteenMinutesInMs) {
+  //       setError("Verification code has expired. Please request a new code.");
+  //       setIsLoading(false);
+  //       return;
+  //     }
+
+  //     // Verify the code
+  //     if (verificationCode === userData.mfaCode) {
+  //       // Code is valid, mark MFA as complete
+  //       await updateDoc(doc(db, "users", currentUser.uid), {
+  //         mfaEnabled: true,
+  //         mfaCode: null, // Clear the code
+  //         mfaCodeTimestamp: null, // Clear the timestamp
+  //       });
+
+  //       setShowVerificationCodeInput(false);
+  //       alert("Multi-factor authentication has been successfully completed!");
+
+  //       navigate("/manage-schedule");
+  //     } else {
+  //       setError("Incorrect verification code. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Verification error:", error);
+  //     setError(`Failed to verify code: ${error.message}`);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // // Request a new verification code
+  // const handleResendCode = async () => {
+  //   try {
+  //     setIsLoading(true);
+
+  //     if (!currentUser) {
+  //       setError("User session expired. Please log in again.");
+  //       setIsLoading(false);
+  //       return;
+  //     }
+
+  //     const newCode = generateRandomCode();
+  //     const sent = await sendVerificationEmail(
+  //       currentUser.email,
+  //       newCode,
+  //       currentUser.uid
+  //     );
+
+  //     if (sent) {
+  //       setExpectedCode(newCode);
+  //       alert("A new verification code has been sent to your email.");
+  //     } else {
+  //       setError("Failed to send verification code. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error resending code:", error);
+  //     setError(`Failed to send new code: ${error.message}`);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+
+  // Handle main login
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
+      // Step 1: Sign in with email and password
+      console.log("Attempting to sign in with email:", email);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
       const user = userCredential.user;
+      setCurrentUser(user);
+      console.log("Sign in successful, user ID:", user.uid);
 
-      // Check if the email is verified
+      // Step 2: Check if email is verified
       if (!user.emailVerified) {
+        console.log("Email not verified");
         setError("Please verify your email before logging in.");
         setIsLoading(false);
         return;
       }
 
-      // Fetch user details from Firestore
+      // Step 3: Get user info from Firestore
+      console.log("Fetching user data from Firestore");
       const userDoc = await getDoc(doc(db, "users", user.uid));
-
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        navigate("/manage-schedule"); // Redirect to dashboard
-      } else {
+      if (!userDoc.exists()) {
+        console.log("User document not found in Firestore");
         setError("User not found in the database.");
+        setIsLoading(false);
+        return;
       }
+
+      // const userData = userDoc.data();
+
+      // // Step 4: Check if MFA is enabled for this user
+      // if (userData.mfaEnabled) {
+      //   // MFA is enabled, send verification code
+      //   // Inside handleLogin, where you call sendVerificationEmail:
+      //   const code = generateRandomCode();
+      //   const sent = await sendVerificationEmail(user.email, code, user.uid); // Make sure to pass user.uid
+      //   if (sent) {
+      //     setExpectedCode(code);
+      //     setShowVerificationCodeInput(true);
+      //     setIsLoading(false);
+      //     return;
+      //   } else {
+      //     setError("Failed to send verification code. Please try again.");
+      //     setIsLoading(false);
+      //     return;
+      //   }
+      // } else {
+      //   // Check if this is first login or if MFA should be enabled
+      //   const shouldEnableMfa = window.confirm(
+      //     "Would you like to enable multi-factor authentication for better security?"
+      //   );
+
+      //   if (shouldEnableMfa) {
+      //     // Generate and send verification code
+      //     const code = generateRandomCode();
+      //     const sent = await sendVerificationEmail(user.email, code, user.uid);
+
+      //     if (sent) {
+      //       setExpectedCode(code);
+      //       setShowVerificationCodeInput(true);
+      //       setIsLoading(false);
+      //       return;
+      //     } else {
+      //       setError("Failed to send verification code. Please try again.");
+      //       setIsLoading(false);
+      //       return;
+      //     }
+      //   }
+      // }
+
+      // No MFA required or user declined, proceed to dashboard
+      console.log("Login successful, navigating to dashboard");
+      navigate("/manage-schedule");
     } catch (error) {
-      setError(error.message.replace("Firebase: ", ""));
-    } finally {
+      console.error("Login Error:", error);
+
+      if (
+        error.code === "auth/user-not-found" ||
+        error.code === "auth/wrong-password"
+      ) {
+        setError("Invalid email or password. Please try again.");
+      } else if (error.code === "auth/too-many-requests") {
+        setError("Too many failed login attempts. Please try again later.");
+      } else {
+        setError(error.message.replace("Firebase: ", ""));
+      }
+
       setIsLoading(false);
     }
   };
@@ -57,22 +244,24 @@ const Login = () => {
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     if (!email) {
       setError("Please enter your email address to reset your password.");
       return;
     }
-  
+
     setIsLoading(true);
     try {
       // Create action code settings with redirect URL
       const actionCodeSettings = {
-        url: window.location.origin + '/', // This will direct back to your login page
-        handleCodeInApp: false
+        url: window.location.origin + "/", // This will direct back to your login page
+        handleCodeInApp: false,
       };
-      
+
       await sendPasswordResetEmail(auth, email, actionCodeSettings);
-      alert("Password reset email sent! Please check your inbox and spam folder.");
+      alert(
+        "Password reset email sent! Please check your inbox and spam folder."
+      );
     } catch (error) {
       setError(error.message.replace("Firebase: ", ""));
     } finally {
@@ -92,7 +281,7 @@ const Login = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      // Save user to Firestore if it’s their first time logging in
+      // Save user to Firestore if it's their first time logging in
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         name: user.displayName,
@@ -127,82 +316,140 @@ const Login = () => {
               </div>
             )}
 
-            <form onSubmit={handleLogin} style={styles.form}>
-              <div style={styles.inputGroup}>
-                <label htmlFor="email" style={styles.label}>
-                  Email
-                </label>
+            {showVerificationCodeInput ? (
+              <div style={styles.verificationContainer}>
+                <h3 style={styles.verificationTitle}>
+                  Enter Verification Code
+                </h3>
+                <p style={styles.verificationText}>
+                  Please enter the 6-digit code sent to your email:
+                </p>
                 <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  type="text"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  placeholder="6-digit code"
+                  maxLength={6}
                   style={styles.input}
-                  placeholder="name@example.com"
                 />
-              </div>
-
-              <div style={styles.inputGroup}>
-                <label htmlFor="password" style={styles.label}>
-                  Password
-                </label>
-                <div style={styles.passwordInputContainer}>
-                  <input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    style={styles.passwordInput}
-                    placeholder="••••••••"
-                  />
+                {/* <div style={styles.verificationButtonsContainer}>
                   <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    style={styles.passwordToggle}
+                    onClick={handleVerifyCode}
+                    disabled={verificationCode.length !== 6 || isLoading}
+                    style={
+                      isLoading || verificationCode.length !== 6
+                        ? { ...styles.button, ...styles.buttonLoading }
+                        : styles.button
+                    }
                   >
-                    {showPassword ? "Hide" : "Show"}
+                    {isLoading ? "Verifying..." : "Verify Code"}
                   </button>
+                  <button
+                    onClick={handleResendCode}
+                    style={styles.secondaryButton}
+                    disabled={isLoading}
+                  >
+                    Resend Code
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowVerificationCodeInput(false);
+                      setError(
+                        "Verification canceled. You can try again later."
+                      );
+                    }}
+                    style={styles.cancelButton}
+                    disabled={isLoading}
+                  >
+                    Cancel
+                  </button>
+                </div> */}
+              </div>
+            ) : (
+              <form onSubmit={handleLogin} style={styles.form}>
+                <div style={styles.inputGroup}>
+                  <label htmlFor="email" style={styles.label}>
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    style={styles.input}
+                    placeholder="name@example.com"
+                  />
                 </div>
-              </div>
 
-              <div style={styles.forgotPasswordContainer}>
-                <a
-                  href="#"
-                  onClick={handleForgotPassword}
-                  style={styles.forgotPasswordLink}
+                <div style={styles.inputGroup}>
+                  <label htmlFor="password" style={styles.label}>
+                    Password
+                  </label>
+                  <div style={styles.passwordInputContainer}>
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      style={styles.passwordInput}
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      style={styles.passwordToggle}
+                    >
+                      {showPassword ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                </div>
+
+                <div style={styles.forgotPasswordContainer}>
+                  <a
+                    href="#"
+                    onClick={handleForgotPassword}
+                    style={styles.forgotPasswordLink}
+                  >
+                    Forgot password?
+                  </a>
+                </div>
+
+                <button
+                  type="submit"
+                  style={
+                    isLoading
+                      ? { ...styles.button, ...styles.buttonLoading }
+                      : styles.button
+                  }
+                  disabled={isLoading}
                 >
-                  Forgot password?
-                </a>
-              </div>
+                  {isLoading ? "Signing in..." : "Sign in"}
+                </button>
+              </form>
+            )}
 
-              <button
-                type="submit"
-                style={
-                  isLoading
-                    ? { ...styles.button, ...styles.buttonLoading }
-                    : styles.button
-                }
-                disabled={isLoading}
-              >
-                {isLoading ? "Signing in..." : "Sign in"}
-              </button>
-            </form>
+            {!showVerificationCodeInput && (
+              <>
+                <div style={styles.divider}>
+                  <span style={styles.dividerLine}></span>
+                  <span style={styles.dividerText}>or</span>
+                  <span style={styles.dividerLine}></span>
+                </div>
 
-            <div style={styles.divider}>
-              <span style={styles.dividerLine}></span>
-              <span style={styles.dividerText}>or</span>
-              <span style={styles.dividerLine}></span>
-            </div>
+                <Link to="/signup" style={styles.createAccountButton}>
+                  Create new account
+                </Link>
 
-            <Link to="/signup" style={styles.createAccountButton}>
-              Create new account
-            </Link>
-
-            <button onClick={handleGoogleSignIn} style={styles.googleButton}>
-              Continue with Google
-            </button>
+                <button
+                  onClick={handleGoogleSignIn}
+                  style={styles.googleButton}
+                >
+                  Continue with Google
+                </button>
+              </>
+            )}
           </div>
 
           <div style={styles.footer}>
@@ -355,6 +602,17 @@ const styles = {
     backgroundColor: "#333333",
     cursor: "not-allowed",
   },
+  secondaryButton: {
+    backgroundColor: "#f1f1f1",
+    color: "#333",
+    border: "none",
+    borderRadius: "3px",
+    padding: "8px 14px",
+    fontSize: "14px",
+    fontWeight: "500",
+    cursor: "pointer",
+    transition: "background-color 0.2s",
+  },
   divider: {
     display: "flex",
     alignItems: "center",
@@ -418,6 +676,41 @@ const styles = {
     cursor: "pointer",
     width: "100%",
     marginTop: "10px",
+  },
+  verificationContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+  },
+  verificationTitle: {
+    fontSize: "18px",
+    fontWeight: "600",
+    color: "#37352f",
+    marginBottom: "4px",
+    marginTop: 0,
+  },
+  verificationText: {
+    fontSize: "14px",
+    color: "#6b6b6b",
+    marginBottom: "16px",
+    marginTop: 0,
+  },
+  verificationButtonsContainer: {
+    display: "flex",
+    gap: "10px",
+    marginTop: "10px",
+    flexWrap: "wrap",
+  },
+  cancelButton: {
+    backgroundColor: "transparent",
+    color: "#6b6b6b",
+    border: "1px solid #e6e6e6",
+    borderRadius: "3px",
+    padding: "8px 14px",
+    fontSize: "14px",
+    fontWeight: "500",
+    cursor: "pointer",
+    transition: "background-color 0.2s",
   },
 };
 

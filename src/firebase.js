@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth ,sendEmailVerification} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getPerformance } from 'firebase/performance';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -17,5 +18,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const perf = getPerformance(app);
 
-export { auth, db, sendEmailVerification};
+
+
+
+export { auth, db, perf, sendEmailVerification};

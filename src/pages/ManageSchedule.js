@@ -17,10 +17,13 @@ import Sidebar from "../components/Sidebar";
 import { auth } from "../firebase";
 import { query, where } from "firebase/firestore";
 import emailjs from "@emailjs/browser";
-import { getAuth } from "firebase/auth";
-import axios from "axios";
-
-emailjs.init("wcwEuLp9fqmUlhoXd"); // Optional if you're using `send()` — safe to include
+// import { getAuth } from "firebase/auth";
+// import axios from "axios";
+import { trackRenderTime, trackDataLoading, trackUserInteraction } from '../utils/performance';
+import { logUserAction, logError, logSystemEvent, LOG_SEVERITY } from '../utils/logging';
+import { invalidateUserCache } from '../utils/scaling';
+// import { getDocs } from 'firebase/firestore';
+emailjs.init("wcwEuLp9fqmUlhoXd"); 
 
 const ManageSchedule = () => {
   // State management
@@ -31,6 +34,7 @@ const ManageSchedule = () => {
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterPriority, setFilterPriority] = useState("all");
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [, setLoading] = useState(true);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -46,66 +50,66 @@ const ManageSchedule = () => {
 
   // Firebase reference
   const schedulesRef = collection(db, "schedules");
+  
+  // const [, setSending] = useState(false);
+  // const [, setError] = useState(null);
 
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState(null);
+  // const sendReminder = async () => {
+  //   const reminderPayload = {
+  //     to: "kokshaoai@gmail.com",
+  //     title: "testing 11",
+  //     scheduleTime: "20:08",
+  //     reminderTime: "18:20",
+  //     date: "2025-04-10",
+  //     category: "events",
+  //     priority: "low",
+  //     reminder: true,
+  //   };
 
-  const sendReminder = async () => {
-    const reminderPayload = {
-      to: "kokshaoai@gmail.com",
-      title: "testing 11",
-      scheduleTime: "20:08",
-      reminderTime: "18:20",
-      date: "2025-04-10",
-      category: "events",
-      priority: "low",
-      reminder: true,
-    };
+  //   setSending(true);
+  //   setError(null);
 
-    setSending(true);
-    setError(null);
+  //   // Use a CORS proxy for development
+  //   const corsProxy = "https://cors-anywhere.herokuapp.com/";
+  //   const functionUrl =
+  //     "https://us-central1-appointmentapplication-9c371.cloudfunctions.net/sendReminderNow";
 
-    // Use a CORS proxy for development
-    const corsProxy = "https://cors-anywhere.herokuapp.com/";
-    const functionUrl =
-      "https://us-central1-appointmentapplication-9c371.cloudfunctions.net/sendReminderNow";
+  //   try {
+  //     // Make the request through the CORS proxy
+  //     const response = await axios.post(
+  //       `${corsProxy}${functionUrl}`,
+  //       reminderPayload,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "X-Requested-With": "XMLHttpRequest", // Required by some CORS proxies
+  //         },
+  //         timeout: 10000,
+  //       }
+  //     );
 
-    try {
-      // Make the request through the CORS proxy
-      const response = await axios.post(
-        `${corsProxy}${functionUrl}`,
-        reminderPayload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest", // Required by some CORS proxies
-          },
-          timeout: 10000,
-        }
-      );
+  //     console.log("Response:", response.data);
+  //     alert("Reminder sent successfully!");
+  //   } catch (error) {
+  //     console.error("Error sending reminder:", error);
 
-      console.log("Response:", response.data);
-      alert("Reminder sent successfully!");
-    } catch (error) {
-      console.error("Error sending reminder:", error);
-
-      if (error.response) {
-        setError(
-          `Server error (${error.response.status}): ${
-            error.response.data.message || JSON.stringify(error.response.data)
-          }`
-        );
-      } else if (error.request) {
-        setError(
-          "No response from server. The Firebase function may be unavailable."
-        );
-      } else {
-        setError(`Request setup error: ${error.message}`);
-      }
-    } finally {
-      setSending(false);
-    }
-  };
+  //     if (error.response) {
+  //       setError(
+  //         `Server error (${error.response.status}): ${
+  //           error.response.data.message || JSON.stringify(error.response.data)
+  //         }`
+  //       );
+  //     } else if (error.request) {
+  //       setError(
+  //         "No response from server. The Firebase function may be unavailable."
+  //       );
+  //     } else {
+  //       setError(`Request setup error: ${error.message}`);
+  //     }
+  //   } finally {
+  //     setSending(false);
+  //   }
+  // };
 
   useEffect(() => {
     if (auth.currentUser) {
@@ -162,6 +166,42 @@ const ManageSchedule = () => {
       };
     }
   }, [isDarkMode]);
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      const userId = auth.currentUser.uid;
+
+      trackDataLoading("schedules_load", async () => {
+        try {
+          const q = query(
+            collection(db, "schedules"),
+            where("userId", "==", userId)
+          );
+
+          logSystemEvent("Fetching schedules", "info", { userId });
+
+          const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const schedulesData = [];
+            querySnapshot.forEach((doc) => {
+              schedulesData.push({ id: doc.id, ...doc.data() });
+            });
+            setSchedules(schedulesData);
+            setLoading(false);
+
+            logSystemEvent("Schedules loaded", "info", {
+              count: schedulesData.length,
+              userId,
+            });
+          });
+
+          return () => unsubscribe();
+        } catch (error) {
+          setLoading(false);
+          logError(error, { action: "fetch_schedules", userId });
+        }
+      });
+    }
+  }, [auth.currentUser]);
 
   // Filter schedules based on selected category and priority
   const filteredSchedules = schedules.filter((schedule) => {
@@ -268,93 +308,125 @@ const ManageSchedule = () => {
     }
 
     console.log("Form Data:", formData);
-    const isMissingField = requiredFields.some((field) => !formData[field]);
+    const missingFields = requiredFields.filter(field => !formData[field]);
+    const isMissingField = missingFields.length > 0;
 
     if (isMissingField) {
+      // Now using the array of missing fields
+      logSystemEvent(
+        `Validation failed: Missing required fields: ${missingFields.join(', ')}`,
+        LOG_SEVERITY.WARNING,
+        { 
+          action: "schedule_validation",
+          missingFields, // Pass the array of missing fields
+          formData
+        }
+      );
       alert("Please fill in all required fields");
       return;
     }
 
-    try {
-      const userId = auth.currentUser.uid; // Get the current user's UID
+    return trackUserInteraction("save_schedule", async () => {
+      try {
+        const userId = auth.currentUser.uid; // Get the current user's UID
 
-      const scheduleData = {
-        title: formData.title,
-        category: formData.category,
-        priority: formData.priority,
-        reminder: formData.reminder,
-        date: formData.date,
-        scheduleTime: formData.scheduleTime,
-        reminderTime: formData.reminderTime, // Ensure reminderTime is included
-        reminderDate: formData.reminderDate,
-        userId: userId, // Add the user ID to the schedule
-      };
+        const scheduleData = {
+          title: formData.title,
+          category: formData.category,
+          priority: formData.priority,
+          reminder: formData.reminder,
+          date: formData.date,
+          scheduleTime: formData.scheduleTime,
+          reminderTime: formData.reminderTime, // Ensure reminderTime is included
+          reminderDate: formData.reminderDate,
+          userId: userId, // Add the user ID to the schedule
+        };
 
-      // Normalize a string for comparison
-      const normalize = (str) => str.trim().toLowerCase();
+        // Normalize a string for comparison
+        const normalize = (str) => str.trim().toLowerCase();
 
-      // Check for duplicate schedule (same title, date, time)
-      const duplicate = schedules.find(
-        (s) =>
-          s.date === formData.date &&
-          s.scheduleTime === formData.scheduleTime &&
-          normalize(s.title) === normalize(formData.title) &&
-          (!selectedSchedule || s.id !== selectedSchedule.id) // avoid comparing with itself during edit
-      );
-
-      if (duplicate) {
-        alert("A schedule with the same title, date, and time already exists.");
-        return;
-      }
-
-      // Optional: Prevent scheduling in the past
-      const selectedDateTime = new Date(
-        `${formData.date}T${formData.scheduleTime}`
-      );
-      if (selectedDateTime < new Date()) {
-        alert("Cannot schedule a task in the past.");
-        return;
-      }
-
-      if (selectedSchedule) {
-        // Update existing schedule
-        await updateDoc(
-          doc(db, "schedules", selectedSchedule.id),
-          scheduleData
+        // Check for duplicate schedule (same title, date, time)
+        const duplicate = schedules.find(
+          (s) =>
+            s.date === formData.date &&
+            s.scheduleTime === formData.scheduleTime &&
+            normalize(s.title) === normalize(formData.title) &&
+            (!selectedSchedule || s.id !== selectedSchedule.id) // avoid comparing with itself during edit
         );
-        alert("Schedule updated successfully!");
-      } else {
-        // Add new schedule
-        await addDoc(schedulesRef, scheduleData);
 
-        // Trigger email reminder if needed
-        if (formData.reminder && auth.currentUser?.email) {
-          // Access the email from auth.currentUser
-          // Trigger reminder email with correct data
-          const reminderPayload = {
-            title: formData.title,
-            category: formData.category,
-            priority: formData.priority,
-            date: formData.date,
-            scheduleTime: formData.scheduleTime,
-            reminderTime: formData.reminderTime,
-            reminderDate: formData.reminderDate,
-            email: auth.currentUser.email, // Use auth.currentUser.email here
-          };
-
-          console.log("Reminder Payload:", reminderPayload); // Check the payload
-          await triggerEmailReminder(reminderPayload);
+        if (duplicate) {
+          alert(
+            "A schedule with the same title, date, and time already exists."
+          );
+          return;
         }
 
-        alert("Schedule added successfully!");
-      }
+        // Optional: Prevent scheduling in the past
+        const selectedDateTime = new Date(
+          `${formData.date}T${formData.scheduleTime}`
+        );
+        if (selectedDateTime < new Date()) {
+          alert("Cannot schedule a task in the past.");
+          return;
+        }
 
-      setIsModalOpen(false);
-      resetForm();
-    } catch (error) {
-      console.error("Error saving schedule:", error);
-      alert("There was an error saving your schedule. Please try again.");
-    }
+        if (selectedSchedule) {
+          // Update existing schedule
+          await updateDoc(
+            doc(db, "schedules", selectedSchedule.id),
+            scheduleData
+          );
+
+          logUserAction("schedule_updated", {
+            scheduleId: selectedSchedule.id,
+          });
+
+          // Invalidate cache for this user
+          invalidateUserCache(userId);
+
+          alert("Schedule updated successfully!");
+        } else {
+          // Add new schedule
+          const docRef = await addDoc(schedulesRef, scheduleData);
+          logUserAction('schedule_created', {scheduleId: docRef.id});
+          
+
+          // Invalidate cache for this user
+          invalidateUserCache(userId);
+
+          // Trigger email reminder if needed
+          if (formData.reminder && auth.currentUser?.email) {
+            // Access the email from auth.currentUser
+            // Trigger reminder email with correct data
+            const reminderPayload = {
+              title: formData.title,
+              category: formData.category,
+              priority: formData.priority,
+              date: formData.date,
+              scheduleTime: formData.scheduleTime,
+              reminderTime: formData.reminderTime,
+              reminderDate: formData.reminderDate,
+              email: auth.currentUser.email, // Use auth.currentUser.email here
+            };
+
+            console.log("Reminder Payload:", reminderPayload); // Check the payload
+            await triggerEmailReminder(reminderPayload);
+          }
+
+          alert("Schedule added successfully!");
+        }
+
+        setIsModalOpen(false);
+        resetForm();
+      } catch (error) {
+        console.error("Error saving schedule:", error);
+        logError(error, {
+          action: selectedSchedule ? "update_schedule" : "create_schedule",
+          scheduleData: formData,
+        });
+        alert("There was an error saving your schedule. Please try again.");
+      }
+    });
   };
 
   const triggerEmailReminder = async (reminderPayload) => {
@@ -395,11 +467,20 @@ const ManageSchedule = () => {
     if (window.confirm("Are you sure you want to delete this schedule?")) {
       try {
         await deleteDoc(doc(db, "schedules", selectedSchedule.id));
+        logUserAction("schedule_deleted", { scheduleId: selectedSchedule.id });
+
+        // Invalidate cache for this user
+        invalidateUserCache(auth.currentUser.uid);
+
         alert("Schedule deleted successfully!");
         setIsModalOpen(false);
         resetForm();
       } catch (error) {
         console.error("Error deleting schedule:", error);
+        logError(error, {
+          action: "delete_schedule",
+          scheduleId: selectedSchedule.id,
+        });
         alert("There was an error deleting your schedule. Please try again.");
       }
     }
@@ -423,7 +504,7 @@ const ManageSchedule = () => {
   // Theme class for dark mode
   const themeClass = isDarkMode ? "dark-theme" : "light-theme";
 
-  return (
+  return trackRenderTime("manage_schedule", () => (
     <div
       className={`schedule-manager ${themeClass}`}
       style={isDarkMode ? darkStyles.container : styles.container}
@@ -982,7 +1063,7 @@ const ManageSchedule = () => {
         )}
       </div>
     </div>
-  );
+  ));
 };
 // Light theme styles
 const styles = {
