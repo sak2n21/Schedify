@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Schedify/static/css/main.e6c13ad2.css",
-    "main.js": "/Schedify/static/js/main.83c629ef.js",
+    "main.js": "/Schedify/static/js/main.ff99bba0.js",
     "static/js/453.2838e13c.chunk.js": "/Schedify/static/js/453.2838e13c.chunk.js",
     "index.html": "/Schedify/index.html",
     "main.e6c13ad2.css.map": "/Schedify/static/css/main.e6c13ad2.css.map",
-    "main.83c629ef.js.map": "/Schedify/static/js/main.83c629ef.js.map",
+    "main.ff99bba0.js.map": "/Schedify/static/js/main.ff99bba0.js.map",
     "453.2838e13c.chunk.js.map": "/Schedify/static/js/453.2838e13c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.83c629ef.js"
+    "static/js/main.ff99bba0.js"
   ]
 }
